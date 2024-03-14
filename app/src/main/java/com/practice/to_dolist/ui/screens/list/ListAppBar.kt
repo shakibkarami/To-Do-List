@@ -1,24 +1,40 @@
 package com.practice.to_dolist.ui.screens.list
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.practice.to_dolist.R
 import com.practice.to_dolist.data.models.Priority
+import com.practice.to_dolist.ui.theme.TOP_APP_BAR_HEIGHT
 
 @Composable
 fun ListAppBar() {
@@ -121,6 +137,41 @@ fun deleteAllActions(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchAppBar(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
+    onSearchClicked: (String) -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(TOP_APP_BAR_HEIGHT)
+    ) {
+        TextField(modifier = Modifier.fillMaxWidth(), value = text, onValueChange = {onTextChange(it)},
+            placeholder = { Text(modifier = Modifier.alpha(0.6f), text = stringResource(R.string.search), color = Color.White) },
+            textStyle = TextStyle(fontSize = 18.sp),
+            singleLine = true,
+            leadingIcon = {IconButton(onClick = {}, modifier = Modifier.alpha(0.4f)) {
+                Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search))
+            }},
+            trailingIcon = {
+                IconButton(onClick = {onCloseClicked()}) {
+                    Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.close_icon))
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {onSearchClicked(text)}
+            )
+        )
+    }
+}
+
 @Composable
 @Preview
 fun ListAppBarPreview() {
@@ -129,4 +180,14 @@ fun ListAppBarPreview() {
         onSortClicked = {},
         onDeleteClicked = {}
     )
+}
+
+@Composable
+@Preview
+fun SearchAppBarPreview() {
+    SearchAppBar(
+        stringResource(id = R.string.search),
+        onSearchClicked = {},
+        onCloseClicked = {},
+        onTextChange = {})
 }
