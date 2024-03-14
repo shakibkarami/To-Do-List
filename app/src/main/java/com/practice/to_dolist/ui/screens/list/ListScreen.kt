@@ -16,7 +16,7 @@ import com.practice.to_dolist.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
-    navigateToTaskScreen: (Int) -> Unit
+    navigateToTaskScreen: (taskId : Int) -> Unit
 ) {
     Scaffold(
         topBar = { ListAppBar() },
@@ -28,7 +28,7 @@ fun ListScreen(
 }
 
 @Composable
-fun ListFab(navigateToTaskScreen: (Int) -> Unit){
+fun ListFab(navigateToTaskScreen: (taskId : Int) -> Unit){
     FloatingActionButton(onClick = { navigateToTaskScreen(-1) }) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = stringResource(R.string.add_task))
     }
