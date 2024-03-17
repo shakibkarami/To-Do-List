@@ -1,5 +1,6 @@
 package com.practice.to_dolist.ui.screens.task
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -22,9 +23,15 @@ import com.practice.to_dolist.util.Action
 
 @Composable
 fun TaskAppBar(
+    selectedTask: Task?,
     navigateToListScreen: (Action) -> Unit
 ){
-    NewTaskAppBar(navigateToListScreen = navigateToListScreen)
+    if (selectedTask == null){
+        NewTaskAppBar(navigateToListScreen = navigateToListScreen)
+    } else {
+        ExistingTaskAppBar(navigateToListScreen = navigateToListScreen, selectedTask = selectedTask)
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

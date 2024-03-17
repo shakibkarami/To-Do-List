@@ -25,7 +25,9 @@ fun SetupNavigation (
             navigateToTaskScreen = screen.task,
             sharedViewModel = sharedViewModel
         )
-        taskComposable(navigateToListScreen = screen.list)
+        taskComposable(
+            navigateToListScreen = screen.list,
+            sharedViewModel = sharedViewModel)
     }
 
 }

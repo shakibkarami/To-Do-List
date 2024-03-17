@@ -1,5 +1,6 @@
 package com.practice.to_dolist.ui.screens.list
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,7 @@ fun DisplayTasks(
     navigateToTaskScreen: (taskId: Int) -> Unit
 ){
 
-    LazyColumn(){
+    LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
         items(items = tasks, key = {task -> task.id}){
                 task -> TaskItem(toDoTask = task,
             navigateToTaskScreen = navigateToTaskScreen)
