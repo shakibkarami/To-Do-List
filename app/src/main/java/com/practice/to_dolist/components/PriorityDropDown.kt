@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +48,7 @@ fun PriorityDropDown(
         .fillMaxWidth()
         .height(60.dp)
         .clickable { expanded = true }
-        .border(width = 1.dp, color = Color.Black),
+        .border(width = 1.dp, color = Color.Black, shape = MaterialTheme.shapes.extraSmall),
         verticalAlignment = Alignment.CenterVertically) {
         Canvas(modifier = Modifier
             .size(PRIORITY_INDICATOR_SIZE)
@@ -63,7 +64,10 @@ fun PriorityDropDown(
         }) {
             Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = stringResource(R.string.dropdown_arrow))
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(fraction = 0.94f),
+            expanded = expanded,
+            onDismissRequest = { expanded = false }) {
             DropdownMenuItem(text = { PriorityItem(priority = Priority.LOW) },
                 onClick = {
                     expanded = false

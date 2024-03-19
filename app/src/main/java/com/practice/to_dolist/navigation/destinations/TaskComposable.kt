@@ -1,6 +1,7 @@
 package com.practice.to_dolist.navigation.destinations
 
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
@@ -30,6 +31,10 @@ fun NavGraphBuilder.taskComposable(
         }
         val selectedTask by sharedViewModel.selectedTask.collectAsState()
         
-        TaskScreen(navigateToListScreen = navigateToListScreen, selectedTask = selectedTask)
+        LaunchedEffect(key1 = intTaskId) {
+            sharedViewModel.updateTaskFields(selectedTask)
+        }
+        
+        TaskScreen(sharedViewModel = sharedViewModel, navigateToListScreen = navigateToListScreen, selectedTask = selectedTask)
     }
 }
