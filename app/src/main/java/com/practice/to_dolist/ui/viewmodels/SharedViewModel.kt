@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.practice.to_dolist.data.models.Priority
 import com.practice.to_dolist.data.models.Task
 import com.practice.to_dolist.data.repositories.ToDoRepository
+import com.practice.to_dolist.util.Action
 import com.practice.to_dolist.util.Constants.MAX_TITLE_LENGHT
 import com.practice.to_dolist.util.RequestState
 import com.practice.to_dolist.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -21,6 +23,8 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(
     private val repository: ToDoRepository
 ) : ViewModel() {
+
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
     val id: MutableState<Int> = mutableStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
@@ -56,6 +60,29 @@ class SharedViewModel @Inject constructor(
                 _selectedTask.value = task
             }
         }
+    }
+
+    private fun addTask(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val task = Task(
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            repository.addTask(task)
+        }
+    }
+
+    fun handleDatabaseActions(action: Action) {
+        when(action) {
+            Action.ADD -> {
+                addTask()
+            }
+            else -> {
+
+            }
+        }
+        this.action.value = Action.NO_ACTION
     }
 
     fun updateTaskFields(selectedTask: Task?) {
