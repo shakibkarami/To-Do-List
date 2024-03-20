@@ -73,10 +73,41 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    private fun updateTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val task = Task(
+                id = id.value,
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            repository.updateTask(task)
+        }
+    }
+
+    private fun deleteTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val task = Task(
+                id = id.value,
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            repository.deleteTask(task)
+        }
+    }
+
+
     fun handleDatabaseActions(action: Action) {
         when(action) {
             Action.ADD -> {
                 addTask()
+            }
+            Action.UPDATE -> {
+                updateTask()
+            }
+            Action.DELETE -> {
+                deleteTask()
             }
             else -> {
 
