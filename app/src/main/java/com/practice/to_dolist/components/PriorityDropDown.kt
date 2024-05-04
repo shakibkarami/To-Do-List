@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +48,7 @@ fun PriorityDropDown(
         .fillMaxWidth()
         .height(60.dp)
         .clickable { expanded = true }
-        .border(width = 1.dp, color = Color.Black, shape = MaterialTheme.shapes.extraSmall),
+        .border(width = 1.dp, color = Color.Black, shape = MaterialTheme.shapes.small),
         verticalAlignment = Alignment.CenterVertically) {
         Canvas(modifier = Modifier
             .size(PRIORITY_INDICATOR_SIZE)
@@ -65,26 +65,35 @@ fun PriorityDropDown(
             Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = stringResource(R.string.dropdown_arrow))
         }
         DropdownMenu(
-            modifier = Modifier.fillMaxWidth(fraction = 0.94f),
+            modifier = Modifier
+                .fillMaxWidth(fraction = 0.94f),
             expanded = expanded,
-            onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(text = { PriorityItem(priority = Priority.LOW) },
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
                 onClick = {
                     expanded = false
                     onPrioritySelected(Priority.LOW)
-                })
-
-            DropdownMenuItem(text = { PriorityItem(priority = Priority.MEDIUM) },
+                }
+            ) {
+                PriorityItem(priority = Priority.LOW)
+            }
+            DropdownMenuItem(
                 onClick = {
                     expanded = false
                     onPrioritySelected(Priority.MEDIUM)
-                })
-
-            DropdownMenuItem(text = { PriorityItem(priority = Priority.HIGH) },
+                }
+            ) {
+                PriorityItem(priority = Priority.MEDIUM)
+            }
+            DropdownMenuItem(
                 onClick = {
                     expanded = false
                     onPrioritySelected(Priority.HIGH)
-                })
+                }
+            ) {
+                PriorityItem(priority = Priority.HIGH)
+            }
         }
     }
 }

@@ -1,25 +1,21 @@
 package com.practice.to_dolist.ui.screens.task
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.practice.to_dolist.R
 import com.practice.to_dolist.components.PriorityDropDown
 import com.practice.to_dolist.data.models.Priority
 import com.practice.to_dolist.ui.theme.LARGE_PADDING
 import com.practice.to_dolist.ui.theme.MEDIUM_PADDING
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskContent(
     title: String,
@@ -27,45 +23,51 @@ fun TaskContent(
     description: String,
     onDescriptionChange: (String) -> Unit,
     priority: Priority,
-    onPrioritySelect: (Priority) -> Unit
+    onPrioritySelected: (Priority) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.background)
             .padding(all = LARGE_PADDING)
     ) {
         OutlinedTextField(
-            value = title,
-            onValueChange = {onTitleChange(it)},
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = "Title")},
-            singleLine = true)
-
+            value = title,
+            onValueChange = { onTitleChange(it) },
+            label = { Text(text = stringResource(id = R.string.title)) },
+            textStyle = MaterialTheme.typography.body1,
+            singleLine = true
+        )
         Divider(
             modifier = Modifier.height(MEDIUM_PADDING),
-            color = Color.Transparent
+            color = MaterialTheme.colors.background
         )
-
-        PriorityDropDown(priority = priority, onPrioritySelected = onPrioritySelect)
-
+        PriorityDropDown(
+            priority = priority,
+            onPrioritySelected = onPrioritySelected
+        )
         OutlinedTextField(
-            value = description,
-            onValueChange = {onDescriptionChange(it)},
             modifier = Modifier.fillMaxSize(),
-            label = { Text(text = "Description")})
+            value = description,
+            onValueChange = { onDescriptionChange(it) },
+            label = { Text(text = stringResource(id = R.string.description)) },
+            textStyle = MaterialTheme.typography.body1
+        )
     }
-
 }
+
 
 @Composable
 @Preview
-fun Preview(){
+private fun TaskContentPreview() {
     TaskContent(
         title = "",
         onTitleChange = {},
         description = "",
         onDescriptionChange = {},
-        priority = Priority.MEDIUM,
-        onPrioritySelect = {}
+        priority = Priority.LOW,
+        onPrioritySelected = {}
     )
 }
+

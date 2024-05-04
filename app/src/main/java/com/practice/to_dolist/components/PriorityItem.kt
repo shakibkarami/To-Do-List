@@ -4,8 +4,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +21,7 @@ fun PriorityItem(priority: Priority){
         Canvas(modifier = Modifier.size(PRIORITY_INDICATOR_SIZE)){
             drawCircle(color = priority.color)
         }
-        Text(modifier = Modifier.padding(start = SMALL_PADDING), text = priority.name, color = MaterialTheme.colorScheme.onSurface)
+        Text(modifier = Modifier.padding(start = SMALL_PADDING), text = priority.name, color = MaterialTheme.colors.onSurface)
     }
 }
 

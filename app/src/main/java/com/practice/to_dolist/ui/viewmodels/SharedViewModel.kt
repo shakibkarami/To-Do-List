@@ -8,10 +8,10 @@ import com.practice.to_dolist.data.models.Priority
 import com.practice.to_dolist.data.models.Task
 import com.practice.to_dolist.data.repositories.ToDoRepository
 import com.practice.to_dolist.util.Action
-import com.practice.to_dolist.util.Constants.MAX_TITLE_LENGHT
 import com.practice.to_dolist.util.RequestState
 import com.practice.to_dolist.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.practice.to_dolist.util.Constants.MAX_TITLE_LENGTH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,22 +31,43 @@ class SharedViewModel @Inject constructor(
     val description: MutableState<String> = mutableStateOf("")
     val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
 
-    private val _allTasks = MutableStateFlow<RequestState<List<Task>>>(RequestState.Idle)
-
-    val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
+    val searchAppBarState: MutableState<SearchAppBarState> =
+        mutableStateOf(SearchAppBarState.CLOSED)
     val searchTextState: MutableState<String> = mutableStateOf("")
 
+    private val _searchedTasks =
+        MutableStateFlow<RequestState<List<Task>>>(RequestState.Idle)
+    val searchedTasks: StateFlow<RequestState<List<Task>>> = _searchedTasks
+
+    fun searchDatabase(searchQuery: String) {
+        _searchedTasks.value = RequestState.Loading
+        try {
+            viewModelScope.launch {
+                repository.searchDatabase(searchQuery = "%$searchQuery%")
+                    .collect { searchedTasks ->
+                        _searchedTasks.value = RequestState.Success(searchedTasks)
+                    }
+            }
+        } catch (e: Exception) {
+            _searchedTasks.value = RequestState.Error(e)
+        }
+        searchAppBarState.value = SearchAppBarState.TRIGGERED
+    }
+
+
+    private val _allTasks =
+        MutableStateFlow<RequestState<List<Task>>>(RequestState.Idle)
     val allTasks: StateFlow<RequestState<List<Task>>> = _allTasks
-    fun getAllTasks(){
+
+    fun getAllTasks() {
         _allTasks.value = RequestState.Loading
         try {
             viewModelScope.launch {
-                repository.getAllTasks.collect{
+                repository.getAllTasks.collect {
                     _allTasks.value = RequestState.Success(it)
-
                 }
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             _allTasks.value = RequestState.Error(e)
         }
     }
@@ -54,23 +75,24 @@ class SharedViewModel @Inject constructor(
     private val _selectedTask: MutableStateFlow<Task?> = MutableStateFlow(null)
     val selectedTask: StateFlow<Task?> = _selectedTask
 
-    fun getSelectedTask(taskId: Int){
+    fun getSelectedTask(taskId: Int) {
         viewModelScope.launch {
-            repository.getTask(taskId = taskId).collect{task ->
+            repository.getTask(taskId = taskId).collect { task ->
                 _selectedTask.value = task
             }
         }
     }
 
-    private fun addTask(){
+    private fun addTask() {
         viewModelScope.launch(Dispatchers.IO) {
             val task = Task(
                 title = title.value,
                 description = description.value,
                 priority = priority.value
             )
-            repository.addTask(task)
+            repository.addTask(task = task)
         }
+        searchAppBarState.value = SearchAppBarState.CLOSED
     }
 
     private fun updateTask() {
@@ -81,7 +103,7 @@ class SharedViewModel @Inject constructor(
                 description = description.value,
                 priority = priority.value
             )
-            repository.updateTask(task)
+            repository.updateTask(task = task)
         }
     }
 
@@ -93,13 +115,18 @@ class SharedViewModel @Inject constructor(
                 description = description.value,
                 priority = priority.value
             )
-            repository.deleteTask(task)
+            repository.deleteTask(task = task)
         }
     }
 
+    private fun deleteAllTasks() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllTasks()
+        }
+    }
 
     fun handleDatabaseActions(action: Action) {
-        when(action) {
+        when (action) {
             Action.ADD -> {
                 addTask()
             }
@@ -109,6 +136,12 @@ class SharedViewModel @Inject constructor(
             Action.DELETE -> {
                 deleteTask()
             }
+            Action.DELETE_ALL -> {
+                deleteAllTasks()
+            }
+            Action.UNDO -> {
+                addTask()
+            }
             else -> {
 
             }
@@ -117,7 +150,7 @@ class SharedViewModel @Inject constructor(
     }
 
     fun updateTaskFields(selectedTask: Task?) {
-        if (selectedTask != null){
+        if (selectedTask != null) {
             id.value = selectedTask.id
             title.value = selectedTask.title
             description.value = selectedTask.description
@@ -131,7 +164,7 @@ class SharedViewModel @Inject constructor(
     }
 
     fun updateTitle(newTitle: String) {
-        if (newTitle.length < MAX_TITLE_LENGHT) {
+        if (newTitle.length < MAX_TITLE_LENGTH) {
             title.value = newTitle
         }
     }

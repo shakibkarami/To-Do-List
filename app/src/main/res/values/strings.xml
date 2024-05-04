@@ -10,4 +10,6 @@
     <string name="delete_icon">Delete Icon</string>
     <string name="update_icon">Update Icon</string>
     <string name="dropdown_arrow">DropDown Arrow</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 </resources>

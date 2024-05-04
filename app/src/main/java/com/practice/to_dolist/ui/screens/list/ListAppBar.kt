@@ -2,21 +2,20 @@ package com.practice.to_dolist.ui.screens.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +32,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.practice.to_dolist.R
+import com.practice.to_dolist.components.PriorityItem
 import com.practice.to_dolist.data.models.Priority
+import com.practice.to_dolist.ui.theme.LARGE_PADDING
 import com.practice.to_dolist.ui.theme.TOP_APP_BAR_HEIGHT
 import com.practice.to_dolist.ui.viewmodels.SharedViewModel
 import com.practice.to_dolist.util.SearchAppBarState
@@ -58,19 +59,23 @@ fun ListAppBar(
         else -> {
             SearchAppBar(
                 text = searchTextState,
-                onTextChange = { sharedViewModel.searchTextState.value = it },
+                onTextChange = { newText ->
+                    sharedViewModel.searchTextState.value = newText
+                },
                 onCloseClicked = {
-                    sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
+                    sharedViewModel.searchAppBarState.value =
+                        SearchAppBarState.CLOSED
                     sharedViewModel.searchTextState.value = ""
                 },
-                onSearchClicked = {}
+                onSearchClicked = {
+                    sharedViewModel.searchDatabase(searchQuery = it)
+                }
             )
         }
     }
-    
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DefaultListAppBar(onSearchClicked: () -> Unit, onSortClicked: (Priority) -> Unit, onDeleteClicked: () -> Unit) {
     TopAppBar(
@@ -116,23 +121,34 @@ fun sortAction(
         )
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(text = { Priority.LOW }, onClick = {
-                expanded = false
-                onSortClicked(Priority.LOW)}
-            )
-            DropdownMenuItem(text = { Priority.MEDIUM }, onClick = {
-                expanded = false
-                onSortClicked(Priority.MEDIUM)}
-            )
-            DropdownMenuItem(text = { Priority.HIGH }, onClick = {
-                expanded = false
-                onSortClicked(Priority.HIGH)}
-            )
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    expanded = false
+                    onSortClicked(Priority.LOW)
+                }
+            ) {
+                PriorityItem(priority = Priority.LOW)
+            }
+            DropdownMenuItem(
+                onClick = {
+                    expanded = false
+                    onSortClicked(Priority.HIGH)
+                }
+            ) {
+                PriorityItem(priority = Priority.HIGH)
+            }
+            DropdownMenuItem(
+                onClick = {
+                    expanded = false
+                    onSortClicked(Priority.NONE)
+                }
+            ) {
+                PriorityItem(priority = Priority.NONE)
+            }
         }
-        
     }
-
 }
 
 
@@ -153,18 +169,25 @@ fun deleteAllActions(
         )
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(text = { stringResource(R.string.delete_all_action) }, onClick = {
-                expanded = false
-                onDeleteClicked()}
-            )
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    expanded = false
+//                    onDeleteAllClicked()
+                }
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(start = LARGE_PADDING),
+                    text = stringResource(id = R.string.delete_all_action),
+//                    style = Typography.subtitle2
+                )
+            }
         }
-
     }
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAppBar(
     text: String,
